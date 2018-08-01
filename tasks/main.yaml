@@ -1,0 +1,79 @@
+---
+ - include_role:
+   name: ggreer.docker
+
+- name: remove old files from remote host
+  tags:
+    - build-image
+  file:
+    path: /home/nginx/nginx-jsonrpc-lb
+    state: absent
+
+- name: Copy files to remote host
+  tags:
+    - build-image
+  copy:
+    src: roles/nginx-jsonrpc-lb/files/*
+    dest: /nginx-jsonrpc-lb
+
+- name: Stop container
+  docker_container:
+    image: ewasm/nginx-jsonrpc-lb
+    name: nginx-jsonrpc-lb
+    state: absent
+    force_kill: yes
+
+- name: delete old container
+  tags:
+    - build-image
+  docker_container:
+    image: ewasm/nginx-jsonrpc-lb
+    name: nginx-jsonrpc-lb
+    state: absent
+    force_kill: yes
+
+- name: Build Docker image
+  tags:
+    - build-image
+  docker_image:
+    name: ewasm/nginx-jsonrpc-lb
+    path: /nginx-jsonrpc-lb
+    state: present
+    force: yes
+
+- name: Delete previous keys
+  tags:
+    - update-keys
+  file:
+    state: absent
+    path: /home/nginx/keys
+
+- name: Copy DH parameters to server
+  tags:
+    - update-keys
+  copy:
+    src: roles/ansible-jsonrpc-lb/files/dhparam.pem
+    dest: /home/nginx/keys/dhparam.pem
+
+- name: Copy SSL cert to server
+  tags:
+    - update-keys
+  copy:
+    src: roles/ansible-jsonrpc-lb/files/proxy_server.crt
+    dest: /home/nginx/keys/proxy_server.crt
+
+- name: Copy SSL key to server
+  tags:
+    - update-keys
+  copy:
+    src: roles/ansible-jsonrpc-lb/files/proxy_server.key
+    dest: /home/nginx/keys/proxy_server.key
+
+- name: Start container
+  name: nginx-jsonrpc-lb
+  image: ewasm/nginx-jsonrpc-lb
+  network_mode: host
+  volumes:
+    - /home/nginx/keys/proxy_server.key: /etc/nginx/ssl_certs/proxy_server.key
+    - /home/nginx/keys/proxy_server.crt: /etc/nginx/ssl_certs/proxy_server.crt
+    - /home/nginx/keys/dhparam.pem: /etc/ssl/dhparam.pem
