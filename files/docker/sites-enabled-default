@@ -14,4 +14,14 @@ server {
     access_by_lua_file 'jsonrpc-access.lua';
     proxy_pass http://rpc_provider;
   }
+  
+  location /ewasm-studio {
+      proxy_pass http://10.0.1.5:3000;
+  }
+  location /explorer {
+      proxy_pass http://10.0.1.5:3001;
+  }
+  location /faucet {
+      proxy_pass http://10.0.1.6:3001;
+  }
 }

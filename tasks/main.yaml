@@ -42,19 +42,19 @@
     state: present
     force: yes
 
-- name: Delete previous keys
-  tags:
-    - update-keys
-  file:
-    state: absent
-    path: /home/{{nginx_user}}/keys
+# - name: Delete previous keys
+  # tags:
+   #  - update-keys
+  # file:
+   #  state: absent
+    # path: /home/{{nginx_user}}/keys
 
-- name: Copy DH parameters to server
-  tags:
-    - update-keys
-  copy:
-    src: keys
-    dest: /home/{{nginx_user}}
+# - name: Copy DH parameters to server
+  # tags:
+   #  - update-keys
+  # copy:
+    # src: keys
+    # dest: /home/{{nginx_user}}
 
 - name: Start container
   docker_container:
@@ -62,7 +62,7 @@
     image: ewasm/nginx-jsonrpc-lb
     state: started
     network_mode: host
-    volumes:
-      - '/home/{{nginx_user}}/keys/proxy_server.key:/etc/nginx/ssl_certs/proxy_server.key'
-      - '/home/{{nginx_user}}/keys/proxy_server.crt:/etc/nginx/ssl_certs/proxy_server.crt'
-      - '/home/{{nginx_user}}/keys/dhparam.pem:/etc/ssl/dhparam.pem'
+    # volumes:
+      # - '/home/{{nginx_user}}/keys/proxy_server.key:/etc/nginx/ssl_certs/proxy_server.key'
+      # - '/home/{{nginx_user}}/keys/proxy_server.crt:/etc/nginx/ssl_certs/proxy_server.crt'
+      # - '/home/{{nginx_user}}/keys/dhparam.pem:/etc/ssl/dhparam.pem'
