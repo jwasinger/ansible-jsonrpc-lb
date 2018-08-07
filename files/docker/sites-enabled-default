@@ -4,24 +4,50 @@ server 10.0.1.6:8545;
 }
 
 server {
-  listen       80;
+  listen       3000;
   server_name  YOUR.SERVER.COM;
   root /var/www/html;
   index index.html;
 
-  location / {
+  location /rpc-provider/ {
     set $jsonrpc_whitelist 'web3_clientVersion,eth_getTransactionByHash,eth_getTransactionReceipt,eth_sendRawTransaction';
     access_by_lua_file 'jsonrpc-access.lua';
     proxy_pass http://rpc_provider;
   }
-  
-  location /ewasm-studio {
-      proxy_pass http://10.0.1.5:3000;
+}
+
+server {
+  listen       3001;
+  server_name  YOUR.SERVER.COM;
+  root /var/www/html;
+  index index.html;
+
+
+  location / {
+      proxy_pass http://10.0.1.5:3000/;
   }
-  location /explorer {
-      proxy_pass http://10.0.1.5:3001;
+}
+
+server {
+  listen       3002;
+  server_name  YOUR.SERVER.COM;
+  root /var/www/html;
+  index index.html;
+
+
+  location / {
+      proxy_pass http://10.0.1.5:3001/;
   }
-  location /faucet {
-      proxy_pass http://10.0.1.6:3001;
+}
+
+server {
+  listen       3003;
+  server_name  YOUR.SERVER.COM;
+  root /var/www/html;
+  index index.html;
+
+
+  location / {
+      proxy_pass http://10.0.1.6:3000/;
   }
 }

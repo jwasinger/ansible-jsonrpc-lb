@@ -24,7 +24,7 @@
     state: absent
     force_kill: yes
 
-- name: delete old container
+- name: Delete old container
   tags:
     - build-image
   docker_container:
@@ -32,6 +32,13 @@
     name: nginx-jsonrpc-lb
     state: absent
     force_kill: yes
+
+- name: Delete Docker image
+  tags:
+    - build-image
+  docker_image:
+    name: ewasm/nginx-jsonrpc-lb
+    state: absent
 
 - name: Build Docker image
   tags:
